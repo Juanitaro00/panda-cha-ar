@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+	<title>Panda Cha · Té de Liche AR</title>
+	<meta charset="utf-8">
+	<meta name="generator" content="Three.js Editor">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="icon" type="image/png" href="assets/img/panda-cara.png">
+	<meta name="theme-color" content="#FEFBF7">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Caveat+Brush&family=Nunito:wght@400;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="css/app.css">
+
+	<style>
+		/* ===== Diálogos de información (línea gráfica Panda Cha) ===== */
+		.dlg {
+			position: fixed;
+			inset: 0;
+			display: none;
+			align-items: center;
+			justify-content: center;
+			padding: 18px;
+			background: rgba(74, 43, 28, 0.55);
+			backdrop-filter: blur(4px);
+			-webkit-backdrop-filter: blur(4px);
+			z-index: 1500;
+		}
+
+		.dlg.abierto {
+			display: flex;
+			animation: dlg-fade 0.22s ease;
+		}
+
+		@keyframes dlg-fade {
+			from { opacity: 0; }
+			to { opacity: 1; }
+		}
+
+		.dlg-card {
+			position: relative;
+			width: 100%;
+			max-width: 380px;
+			max-height: 90vh;
+			overflow-y: auto;
+			box-sizing: border-box;
+			padding: 34px 26px 28px;
+			background: #fff7f3;
+			border: 3px solid #f8adbc;
+			border-radius: 26px;
+			box-shadow: 0 14px 40px rgba(74, 43, 28, 0.35);
+			font-family: 'Nunito', sans-serif;
+			font-size: 15px;
+			line-height: 1.55;
+			color: #4a2b1c;
+			text-align: center;
+			-webkit-user-select: none;
+			user-select: none;
+			-webkit-tap-highlight-color: transparent;
+			animation: dlg-pop 0.28s cubic-bezier(0.2, 1.3, 0.4, 1);
+		}
+
+		@keyframes dlg-pop {
+			from { transform: scale(0.88) translateY(14px); }
+			to { transform: scale(1) translateY(0); }
+		}
+
+		.dlg-card h2 {
+			margin: 0;
+			padding: 0 28px;
+			text-wrap: balance;
+			font-family: 'Baloo 2', sans-serif;
+			font-weight: 800;
+			font-size: 28px;
+			line-height: 1.1;
+			color: #fc3d62;
+		}
+
+		.dlg-card .dlg-sub {
+			position: relative;
+			margin: 2px auto 22px;
+			padding-bottom: 14px;
+			font-family: 'Baloo 2', sans-serif;
+			font-weight: 700;
+			font-size: 16px;
+			color: #1f8f3a;
+		}
+
+		/* línea decorativa bajo el subtítulo */
+		.dlg-sub::after {
+			content: '';
+			position: absolute;
+			left: 50%;
+			bottom: 0;
+			width: 44px;
+			height: 4px;
+			margin-left: -22px;
+			border-radius: 4px;
+			background: linear-gradient(90deg, #f8adbc, #fcb51d, #1f8f3a);
+		}
+
+		.dlg-card p {
+			margin: 0 auto 12px;
+			max-width: 310px;
+			text-wrap: balance;
+			hyphens: none;
+		}
+
+		.dlg-lema {
+			margin: 20px 0 0 !important;
+			padding-top: 14px;
+			border-top: 2px dotted #f8adbc;
+			max-width: none !important;
+			font-family: 'Caveat Brush', 'Baloo 2', cursive;
+			font-size: 24px;
+			color: #ed4002;
+		}
+
+		.dlg-close {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			z-index: 2;
+			width: 36px;
+			height: 36px;
+			border: none;
+			border-radius: 50%;
+			background: #fc3d62;
+			color: #fff;
+			font-family: 'Baloo 2', sans-serif;
+			font-size: 22px;
+			line-height: 36px;
+			padding: 0;
+			cursor: pointer;
+			box-shadow: 0 3px 8px rgba(252, 61, 98, 0.4);
+		}
+
+		.dlg-close:active {
+			transform: scale(0.92);
+		}
+
+		.dlg-video {
+			margin: 0 0 18px;
+			border-radius: 18px;
+			overflow: hidden;
+			border: 3px solid #fcb51d;
+			background: #4a2b1c;
+			line-height: 0;
+		}
+
+		.dlg-video video {
+			width: 100%;
+			display: block;
+			aspect-ratio: 16 / 9;
+			background: #4a2b1c;
+		}
+
+		.dlg-lista {
+			margin: 0 0 6px;
+			padding: 0;
+			list-style: none;
+			text-align: left;
+		}
+
+		.dlg-lista li {
+			position: relative;
+			margin: 0 0 6px;
+			padding-left: 24px;
+		}
+
+		.dlg-lista li::before {
+			content: '';
+			position: absolute;
+			left: 4px;
+			top: 7px;
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
+			background: #f8adbc;
+			border: 2px solid #fc3d62;
+			box-sizing: border-box;
+		}
+
+		.dlg-nota {
+			margin-bottom: 6px !important;
+			font-size: 13px;
+			color: #1f8f3a;
+			font-weight: 700;
+		}
+
+		.dlg-precio {
+			margin: 4px 0 2px;
+			font-family: 'Baloo 2', sans-serif;
+			font-weight: 800;
+			font-size: 46px;
+			line-height: 1;
+			color: #ed4002;
+		}
+
+		.dlg-barcode {
+			margin: 14px auto 0;
+			width: 190px;
+			padding: 10px 12px 6px;
+			background: #fff;
+			border-radius: 10px;
+			border: 2px dashed #f8adbc;
+		}
+
+		.dlg-barcode .barras {
+			height: 46px;
+			background: repeating-linear-gradient(90deg,
+					#4a2b1c 0 2px, #fff 2px 4px,
+					#4a2b1c 4px 5px, #fff 5px 8px,
+					#4a2b1c 8px 11px, #fff 11px 12px,
+					#4a2b1c 12px 13px, #fff 13px 16px);
+		}
+
+		.dlg-barcode .num {
+			margin-top: 4px;
+			font-size: 12px;
+			letter-spacing: 3px;
+			font-weight: 700;
+		}
+
+		/* ===== Pantalla de inicio (línea gráfica Panda Cha) ===== */
+		.pc-inicio {
+			--durazno: #F04D1A;
+			--durazno-oscuro: #B53A12;
+			--limon: #ED9F2D;
+			--fresa: #FCB6B5;
+			--hoja: #6A9D42;
+			--cacao: #4C3228;
+			--cacao-suave: #6B5047;
+			--crema: #FEFBF7;
+			--coral: #E4505A;
+			position: fixed;
+			inset: 0;
+			z-index: 3000;
+			overflow: hidden;
+			background: var(--crema);
+			color: var(--cacao);
+			font-family: 'Poppins', sans-serif;
+			-webkit-user-select: none;
+			user-select: none;
+			transition: opacity 0.4s ease;
+		}
+
+		.pc-inicio.oculto {
+			opacity: 0;
+			pointer-events: none;
+		}
+
+		.pc-inicio *,
+		.pc-inicio *::before,
+		.pc-inicio *::after {
+			box-sizing: border-box;
+		}
+
+		/* Frutas reales de fondo (con opacidad) */
+		.pc-fondo {
+			--r: 0deg;
+			--d: 0s;
+			position: absolute;
+			height: auto;
+			pointer-events: none;
+			transform: rotate(var(--r));
+			animation: pc-flota 7s ease-in-out infinite;
+			animation-delay: var(--d);
+		}
+
+		.pc-fx1 { width: 118px; right: -34px; top: 70px; --r: 18deg; opacity: 0.32; }
+		.pc-fx2 { width: 150px; left: -38px; top: -22px; --r: -14deg; opacity: 0.3; --d: -2s; }
+		.pc-fx3 { width: 120px; left: -42px; top: 42%; --r: -10deg; opacity: 0.32; --d: -3.5s; }
+		.pc-fx4 { width: 96px; right: -30px; top: 58%; --r: 14deg; opacity: 0.32; --d: -1s; }
+		.pc-fx5 { width: 130px; right: -40px; bottom: 40px; --r: -10deg; opacity: 0.26; --d: -4.5s; }
+		.pc-fx6 { width: 100px; left: -34px; bottom: 70px; --r: 22deg; opacity: 0.26; --d: -5.5s; }
+
+		.pc-hoja {
+			position: absolute;
+			pointer-events: none;
+		}
+
+		.pc-hoja-1 { left: 22px; top: 14px; width: 40px; height: 40px; transform: rotate(-18deg); }
+		.pc-hoja-2 { right: 26px; top: 12px; width: 30px; height: 30px; transform: rotate(70deg); }
+
+		/* Vistas (inicio / cargando) */
+		.pc-vista {
+			position: relative;
+			z-index: 1;
+			width: 100%;
+			height: 100%;
+			margin: 0 auto;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			text-align: center;
+			padding: calc(env(safe-area-inset-top, 0px) + 34px) 24px max(18px, env(safe-area-inset-bottom, 0px));
+			overflow-y: auto;
+		}
+
+		.pc-vista-carga {
+			display: none;
+			max-width: 520px;
+		}
+
+		.pc-inicio.cargando .pc-vista-inicio {
+			display: none;
+		}
+
+		.pc-inicio.cargando .pc-vista-carga {
+			display: flex;
+		}
+
+		.pc-texto,
+		.pc-accion {
+			width: 100%;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+
+		.pc-pill {
+			padding: 7px 16px;
+			background: #FFFFFF;
+			border: 2px solid var(--fresa);
+			border-radius: 999px;
+			font-size: 10.5px;
+			font-weight: 600;
+			letter-spacing: 0.14em;
+			text-transform: uppercase;
+			color: var(--cacao);
+		}
+
+		.pc-logo {
+			display: block;
+			width: min(330px, 84vw);
+			height: auto;
+			max-height: 24dvh;
+			object-fit: contain;
+			margin-top: clamp(12px, 2.4dvh, 26px);
+			pointer-events: none;
+		}
+
+		.pc-producto {
+			margin: clamp(6px, 1.2dvh, 12px) 0 0;
+			display: flex;
+			align-items: baseline;
+			gap: 10px;
+			font-family: 'Baloo 2', sans-serif;
+			font-weight: 700;
+			font-size: 24px;
+			line-height: 1;
+		}
+
+		.pc-producto b { color: var(--durazno); font-weight: 700; }
+		.pc-producto span { font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 500; color: var(--cacao-suave); }
+
+		.pc-hero {
+			position: relative;
+			flex: 1 1 0;
+			min-height: 120px;
+			width: 100%;
+			max-width: 320px;
+			margin: 6px 0;
+			container-type: size;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		/* Escena: caja con la proporción del panda; las frutas se colocan en % sobre ella */
+		.pc-escena {
+			position: relative;
+			width: calc(min(100cqw, 100cqh) * 1.18);
+			aspect-ratio: 1;
+		}
+
+		/* Círculo rosado detrás del panda */
+		.pc-circulo {
+			position: absolute;
+			left: 44.2%;
+			top: 53.9%;
+			height: 78%;
+			aspect-ratio: 1;
+			transform: translate(-50%, -50%);
+			border-radius: 50%;
+			background: var(--fresa);
+			opacity: 0.5;
+		}
+
+		/* Panda animado: video con fondo azul pintado en un canvas con fondo transparente */
+		.pc-panda {
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			pointer-events: none;
+			opacity: 0;
+			transition: opacity 0.3s ease;
+		}
+
+		.pc-video {
+			position: absolute;
+			left: 0;
+			top: 0;
+			width: 2px;
+			height: 2px;
+			opacity: 0;
+			pointer-events: none;
+		}
+
+		/* Imagen de respaldo mientras carga el video (o si el navegador no lo deja reproducir) */
+		.pc-panda-fb {
+			position: absolute;
+			left: 0;
+			top: 7%;
+			width: 100%;
+			height: 86%;
+			object-fit: contain;
+			pointer-events: none;
+			animation: pc-float 3.2s ease-in-out infinite;
+		}
+
+		.pc-escena.listo .pc-panda { opacity: 1; }
+		.pc-escena.listo .pc-panda-fb { display: none; }
+
+		.pc-tarjeta {
+			width: 100%;
+			max-width: 420px;
+			display: flex;
+			align-items: center;
+			gap: 14px;
+			padding: 12px 16px;
+			background: #FFFFFF;
+			border: 2px solid var(--fresa);
+			border-radius: 24px;
+			text-align: left;
+		}
+
+		.pc-icono {
+			flex: none;
+			width: 44px;
+			height: 44px;
+			border-radius: 50%;
+			background: rgba(252, 182, 181, 0.45);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.pc-tarjeta-titulo {
+			font-family: 'Baloo 2', sans-serif;
+			font-weight: 700;
+			font-size: 17px;
+			line-height: 1.1;
+		}
+
+		.pc-tarjeta-texto {
+			margin-top: 2px;
+			font-size: 12px;
+			line-height: 1.35;
+			color: var(--cacao-suave);
+		}
+
+		.pc-boton {
+			appearance: none;
+			-webkit-appearance: none;
+			width: 100%;
+			max-width: 420px;
+			height: 66px;
+			margin: 16px 0 0;
+			padding: 0;
+			border: 0;
+			border-radius: 999px;
+			background: var(--durazno);
+			color: #FFFFFF;
+			box-shadow: 0 6px 0 var(--durazno-oscuro);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 12px;
+			font-family: 'Baloo 2', sans-serif;
+			font-weight: 800;
+			font-size: 26px;
+			cursor: pointer;
+			-webkit-tap-highlight-color: transparent;
+			transition: transform 0.12s ease, box-shadow 0.12s ease;
+		}
+
+		.pc-boton:hover { transform: translateY(-2px); box-shadow: 0 8px 0 var(--durazno-oscuro); }
+		.pc-boton:active { transform: translateY(5px); box-shadow: 0 1px 0 var(--durazno-oscuro); }
+		.pc-boton:focus-visible { outline: 3px solid var(--cacao); outline-offset: 3px; }
+		.pc-boton:disabled { opacity: 0.7; cursor: default; }
+
+		.pc-error {
+			display: none;
+			max-width: 420px;
+			margin: 12px 0 0;
+			font-size: 13px;
+			font-weight: 600;
+			line-height: 1.35;
+			color: var(--durazno-oscuro);
+		}
+
+		.pc-error.visible { display: block; }
+
+		.pc-eslogan {
+			margin: 20px 0 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+			font-family: 'Caveat Brush', cursive;
+			font-size: 21px;
+			line-height: 1.1;
+			color: var(--coral);
+		}
+
+		.pc-eslogan img { width: 17px; height: auto; }
+
+		/* Vista de carga */
+		.pc-centro {
+			flex: 1 1 auto;
+			width: 100%;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: 16px;
+		}
+
+		.pc-vista-carga .pc-logo { width: min(260px, 70vw); max-height: 18dvh; margin-top: 0; }
+
+		.pc-panda-cara {
+			display: block;
+			width: 150px;
+			height: auto;
+			max-height: 22dvh;
+			object-fit: contain;
+			pointer-events: none;
+			animation: pc-bounce 1.6s ease-in-out infinite;
+		}
+
+		.pc-carga-titulo {
+			margin: 0;
+			font-family: 'Baloo 2', sans-serif;
+			font-weight: 800;
+			font-size: 30px;
+			line-height: 1.05;
+		}
+
+		.pc-carga-titulo b { color: var(--durazno); font-weight: 800; }
+
+		.pc-carga-estado {
+			margin: -6px 0 0;
+			font-size: 14px;
+			line-height: 1.4;
+			color: var(--cacao-suave);
+		}
+
+		.pc-barra-caja {
+			width: 100%;
+			max-width: 420px;
+			padding: 0 16px;
+		}
+
+		.pc-pct {
+			margin-bottom: 6px;
+			text-align: right;
+			font-family: 'Baloo 2', sans-serif;
+			font-weight: 700;
+			font-size: 18px;
+			line-height: 1;
+		}
+
+		.pc-barra {
+			height: 24px;
+			padding: 3px;
+			background: #FFFFFF;
+			border: 2px solid var(--fresa);
+			border-radius: 999px;
+		}
+
+		.pc-barra-fill {
+			height: 100%;
+			width: 0%;
+			min-width: 18px;
+			border-radius: 999px;
+			background: linear-gradient(90deg, #F04D1A 0%, #ED9F2D 62%, #FCB6B5 100%);
+			transition: width 0.35s ease;
+		}
+
+		.pc-vista-carga .pc-eslogan { margin-top: 12px; }
+
+		@keyframes pc-flota {
+			0%, 100% { transform: translateY(0) rotate(var(--r)); }
+			50% { transform: translateY(-9px) rotate(calc(var(--r) + 5deg)); }
+		}
+
+		@keyframes pc-float {
+			0%, 100% { transform: translateY(0); }
+			50% { transform: translateY(-7px); }
+		}
+
+		@keyframes pc-bounce {
+			0%, 100% { transform: translateY(0) rotate(-3deg); }
+			50% { transform: translateY(-12px) rotate(3deg); }
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			.pc-panda-fb, .pc-panda-cara, .pc-fondo { animation: none; }
+			.pc-barra-fill { transition: none; }
+		}
+
+		/* ===== Pantallas de computador: panda enorme a la izquierda ===== */
+		@media (min-width: 900px) and (min-height: 560px) {
+			.pc-fx1 { width: 260px; right: -60px; top: -50px; --r: 20deg; opacity: 0.35; }
+			.pc-fx2 { width: 260px; left: -70px; top: -60px; --r: -14deg; opacity: 0.3; }
+			.pc-fx3 { width: 120px; left: 55%; top: 1%; --r: -12deg; opacity: 0.33; }
+			.pc-fx4 { width: 150px; right: -60px; top: 40%; --r: 14deg; opacity: 0.3; }
+			.pc-fx5 { width: 320px; right: -80px; bottom: -110px; --r: -10deg; opacity: 0.28; }
+			.pc-fx6 { width: 200px; left: 44%; bottom: -40px; --r: 25deg; opacity: 0.3; }
+			.pc-hoja-1 { left: auto; right: 22%; top: 7%; width: 50px; height: 50px; }
+			.pc-hoja-2 { right: 4%; top: 46%; width: 40px; height: 40px; }
+
+			.pc-vista-inicio {
+				display: grid;
+				grid-template-columns: minmax(0, 1.4fr) minmax(380px, 470px);
+				grid-template-rows: 1fr auto auto 1fr;
+				column-gap: 32px;
+				justify-content: center;
+				max-width: 1600px;
+				padding: 32px 56px;
+				text-align: left;
+				overflow: hidden;
+			}
+
+			.pc-escena { width: calc(min(100cqw, 100cqh) * 1.1); }
+			.pc-hero { grid-column: 1; grid-row: 1 / span 4; max-width: none; height: 100%; max-height: 980px; min-height: 0; align-self: center; margin: 0 0 0 -2vw; }
+			.pc-texto, .pc-accion { position: relative; z-index: 2; }
+			.pc-texto { grid-column: 2; grid-row: 2; align-items: flex-start; margin-bottom: 28px; }
+			.pc-accion { grid-column: 2; grid-row: 3; align-items: flex-start; }
+			.pc-logo { width: min(440px, 100%); max-height: none; margin-top: 22px; }
+			.pc-producto { display: none; }
+			.pc-pill { font-size: 11.5px; }
+			.pc-tarjeta, .pc-boton, .pc-error { max-width: 440px; }
+			.pc-eslogan { font-size: 26px; justify-content: flex-start; margin-top: 24px; }
+			.pc-eslogan img { width: 20px; }
+
+			.pc-vista-carga { max-width: 560px; }
+			.pc-panda-cara { width: 180px; }
+			.pc-carga-titulo { font-size: 38px; }
+			.pc-carga-estado { font-size: 16px; }
+		}
+	</style>
+
+	<script type="importmap">
+	{
+		"imports": {
+			"three": "./js/three.compat.js",
+			"three/addons/": "./js/addons/",
+			"mindar-image-three": "https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"
+		}
+	}
+	</script>
+
+	<script type="module">
+		import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.186.0/examples/jsm/loaders/GLTFLoader.js';
+		window.ThreeGLTFLoader = GLTFLoader;
+	</script>
+</head>
+
+<body ontouchstart="">
+
+	<div id="ar-container"></div>
+
+	<div class="log" id="log"></div>
+
+	<!-- Botones en pantalla (aparecen cuando se detecta la lata) -->
+	<div id="ar-buttons">
+		<button class="ar-btn" data-modal="panda">Panda</button>
+		<button class="ar-btn" data-modal="fruta">Liche</button>
+		<button class="ar-btn" data-modal="precio">Precio</button>
+	</div>
+
+	<!-- Voz del panda: suena solo cuando se abre el diálogo "Nuestro panda" -->
+	<audio id="audio-panda" src="assets/audio/panda-voz.mp3" preload="auto"></audio>
+
+	<!-- Canción del slogan: suena al tocar "Good Tea Brighter Days" en la parte trasera de la etiqueta -->
+	<audio id="audio-cancion" src="assets/audio/slogan.mp3" preload="auto"></audio>
+
+	<!-- Diálogo: Panda (descripción + voz) -->
+	<div class="dlg" id="modal-panda" role="dialog" aria-modal="true">
+		<div class="dlg-card">
+			<button class="dlg-close" data-cerrar aria-label="Cerrar">&times;</button>
+			<h2>Nuestro panda</h2>
+			<p class="dlg-sub">El corazón de la marca</p>
+			<p>Tranquilo, amigable y entrañable: el panda representa lo que Panda Cha quiere que sientas. Parar un momento, desconectarte y encontrar alegría en las cosas simples.</p>
+			<p>Lo verás entre hojas de té y frutas, siempre cerca y expresivo. Su guiño es una invitación juguetona a compartir cada sorbo con un cómplice más del día.</p>
+			<p class="dlg-lema">Un día más lindo juntos.</p>
+		</div>
+	</div>
+
+	<!-- Diálogo: Historia del panda (video) – se abre al tocar el panda de la parte trasera de la etiqueta -->
+	<div class="dlg" id="modal-historia" role="dialog" aria-modal="true">
+		<div class="dlg-card">
+			<button class="dlg-close" data-cerrar aria-label="Cerrar">&times;</button>
+			<div class="dlg-video">
+				<video id="video-panda" src="assets/video/panda-historia.mp4" playsinline controls preload="metadata"></video>
+			</div>
+			<h2>La historia del panda</h2>
+			<p class="dlg-sub">Conoce a Panda Cha</p>
+			<p>Dale play y deja que el panda te cuente quién es y qué hay detrás de cada lata.</p>
+			<p class="dlg-lema">Pequeños momentos, grandes sonrisas.</p>
+		</div>
+	</div>
+
+	<!-- Diálogo: Marca -->
+	<div class="dlg" id="modal-marca" role="dialog" aria-modal="true">
+		<div class="dlg-card">
+			<button class="dlg-close" data-cerrar aria-label="Cerrar">&times;</button>
+			<h2>Panda Cha</h2>
+			<p class="dlg-sub">Té frío con sonrisa</p>
+			<p>Nacimos para hacer de cada sorbo un pequeño descanso: tés fríos con sabores frescos, naturales y una dosis de ternura kawaii que te arranca una sonrisa.</p>
+			<p class="dlg-lema">Pequeños momentos, grandes sonrisas.</p>
+		</div>
+	</div>
+
+	<!-- Diálogo: Fruta / producto -->
+	<div class="dlg" id="modal-fruta" role="dialog" aria-modal="true">
+		<div class="dlg-card">
+			<button class="dlg-close" data-cerrar aria-label="Cerrar">&times;</button>
+			<h2>Té de Liche</h2>
+			<p class="dlg-sub">Frutal y delicado</p>
+			<ul class="dlg-lista">
+				<li>Té negro</li>
+				<li>Jugo de lichi natural</li>
+				<li>Agua</li>
+				<li>Azúcar de caña</li>
+				<li>Ácido cítrico</li>
+			</ul>
+			<p class="dlg-nota">Sin colorantes ni conservantes artificiales</p>
+			<p class="dlg-nota">Lata 100% reciclable</p>
+		</div>
+	</div>
+
+	<!-- Diálogo: Precio -->
+	<div class="dlg" id="modal-precio" role="dialog" aria-modal="true">
+		<div class="dlg-card">
+			<button class="dlg-close" data-cerrar aria-label="Cerrar">&times;</button>
+			<h2>Precio y datos</h2>
+			<p class="dlg-sub">Lata de 350 ml</p>
+			<div class="dlg-precio">$ 3.500</div>
+			<p class="dlg-nota">COP</p>
+			<div class="dlg-barcode">
+				<div class="barras"></div>
+				<div class="num">7 506789 123456</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Pantalla de inicio -->
+	<div id="pc-inicio" class="pc-inicio">
+
+		<!-- Decoración: frutas reales de fondo con opacidad -->
+		<img class="pc-fondo pc-fx1" src="assets/img/fruta-limon.png" alt="">
+		<img class="pc-fondo pc-fx2" src="assets/img/fruta-durazno.png" alt="">
+		<img class="pc-fondo pc-fx3" src="assets/img/fruta-liche.png" alt="">
+		<img class="pc-fondo pc-fx4" src="assets/img/fruta-fresa.png" alt="">
+		<img class="pc-fondo pc-fx5" src="assets/img/fruta-durazno.png" alt="">
+		<img class="pc-fondo pc-fx6" src="assets/img/fruta-limon.png" alt="">
+		<svg class="pc-hoja pc-hoja-1" aria-hidden="true" viewBox="0 0 60 60"><path d="M5 55C5 25 25 5 55 5C55 35 35 55 5 55Z" fill="#6A9D42" /><path d="M9 51C22 36 36 22 51 9" stroke="#3F7A2A" stroke-width="3" fill="none" stroke-linecap="round" /></svg>
+		<svg class="pc-hoja pc-hoja-2" aria-hidden="true" viewBox="0 0 60 60"><path d="M5 55C5 25 25 5 55 5C55 35 35 55 5 55Z" fill="#6A9D42" /><path d="M9 51C22 36 36 22 51 9" stroke="#3F7A2A" stroke-width="3" fill="none" stroke-linecap="round" /></svg>
+
+		<!-- Vista 1: inicio -->
+		<main class="pc-vista pc-vista-inicio">
+
+			<div class="pc-texto">
+				<div class="pc-pill">Experiencia de realidad aumentada</div>
+				<img class="pc-logo" src="assets/img/logo.png" alt="Panda Cha, Good Tea Brighter Days">
+				<p class="pc-producto">Té de <b>Liche</b> <span>· 350 ml</span></p>
+			</div>
+
+			<div class="pc-hero">
+				<div class="pc-escena">
+					<div class="pc-circulo"></div>
+					<img class="pc-panda-fb" src="assets/img/panda-saludo.png" alt="Panda saludando con una hoja de té">
+					<video class="pc-video" id="pc-video" src="assets/video/panda-inicio.mp4" muted loop autoplay playsinline webkit-playsinline preload="auto" aria-hidden="true"></video>
+					<canvas class="pc-panda" id="pc-canvas" role="img" aria-label="Panda saludando y guiñando un ojo"></canvas>
+				</div>
+			</div>
+
+			<div class="pc-accion">
+				<div class="pc-tarjeta">
+					<div class="pc-icono">
+						<svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F04D1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" /><circle cx="12" cy="13.5" r="3.5" /></svg>
+					</div>
+					<div>
+						<div class="pc-tarjeta-titulo">Apunta la cámara a la lata</div>
+						<div class="pc-tarjeta-texto">y mira cómo el panda cobra vida</div>
+					</div>
+				</div>
+
+				<button type="button" id="pc-start" class="pc-boton">
+					<span id="pc-start-label">Empezar</span>
+					<svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+				</button>
+				<p id="pc-error" class="pc-error" role="alert"></p>
+
+				<p class="pc-eslogan">Pequeños momentos, grandes sonrisas. <img src="assets/img/corazon.png" alt=""></p>
+			</div>
+
+		</main>
+
+		<!-- Vista 2: cargando -->
+		<section class="pc-vista pc-vista-carga" aria-live="polite">
+
+			<div class="pc-centro">
+				<img class="pc-logo" src="assets/img/logo.png" alt="Panda Cha, Good Tea Brighter Days">
+				<img class="pc-panda-cara" src="assets/img/panda-cara.png" alt="Panda guiñando un ojo">
+
+				<h2 class="pc-carga-titulo">Preparando la <b>magia</b>…</h2>
+				<p class="pc-carga-estado" id="pc-estado">Estamos despertando al panda y todo su mundo.</p>
+
+				<div class="pc-barra-caja">
+					<div class="pc-pct" id="pc-pct">0%</div>
+					<div class="pc-barra" id="pc-barra" role="progressbar" aria-label="Progreso de carga" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+						<div class="pc-barra-fill" id="pc-barra-fill"></div>
+					</div>
+				</div>
+
+				<div class="pc-tarjeta">
+					<div class="pc-icono">
+						<svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F04D1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" /><circle cx="12" cy="13.5" r="3.5" /></svg>
+					</div>
+					<div>
+						<div class="pc-tarjeta-titulo">Permite la cámara</div>
+						<div class="pc-tarjeta-texto">Cuando tu dispositivo lo pida, toca “Permitir” para ver al panda.</div>
+					</div>
+				</div>
+			</div>
+
+			<p class="pc-eslogan">Un día más lindo juntos. <img src="assets/img/corazon.png" alt=""></p>
+
+		</section>
+
+	</div>
+
+	<!-- Panda animado: quita el fondo azul del video y lo pinta con transparencia -->
+	<script>
+		(function () {
+			const video = document.getElementById('pc-video');
+			const canvas = document.getElementById('pc-canvas');
+			if (!video || !canvas) return;
+			const escena = canvas.parentElement;
+			const T = 720;
+			canvas.width = T;
+			canvas.height = T;
+			const ctx = canvas.getContext('2d', { willReadFrequently: true });
+			const FADE = 24; // px de desvanecido en los bordes del cuadro
+			let ultimo = -1;
+			const reducirMovimiento = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+			const AL = new Uint8Array(T * T), TM = new Uint8Array(T * T), AO = new Uint8Array(T * T), AV = new Uint8Array(T * T), AR = new Uint8Array(T * T);
+			function pintar() {
+				ctx.drawImage(video, 0, 0, T, T);
+				const img = ctx.getImageData(0, 0, T, T);
+				const px = img.data;
+				for (let y = 0, i = 0; y < T; y++) {
+					const ey = Math.min(y, T - 1 - y);
+					for (let x = 0; x < T; x++, i += 4) {
+						let r = px[i], g = px[i + 1], b = px[i + 2];
+						const m = r > g ? r : g;
+						const d = b - (r + g) / 2; // cuánto "azul puro" tiene el píxel
+						let a = 1;
+						if (d > 10) a = d >= 200 ? 0 : 1 - (d - 10) / 190;
+						if (a > 0 && a < 1) {
+							r = r / a;
+							g = (g - (1 - a) * 4) / a;
+							b = (b - (1 - a) * 253) / a;
+							if (r > 255) r = 255;
+							if (g < 0) g = 0; else if (g > 255) g = 255;
+							if (b < 0) b = 0;
+						}
+						// la marca no usa azul: ningún píxel puede tener más azul que verde
+						if (b > g) b = g;
+						if (b > r) b = r;
+						const e = Math.min(ey, x, T - 1 - x);
+						if (e < FADE) a *= e / FADE;
+						px[i] = r; px[i + 1] = g; px[i + 2] = b; px[i + 3] = a * 255;
+						AL[y * T + x] = a * 255; AR[y * T + x] = (r + g + b < 330 && a > 0.5) ? 1 : 0; AV[y * T + x] = a * 255;
+					}
+				}
+				// trazos oscuros gruesos (texto, panda) no se tocan; contornos finos sí
+				for (let y = 1; y < T - 1; y++) {
+					const o = y * T;
+					for (let x = 1; x < T - 1; x++) {
+						const k = o + x;
+						AO[k] = AR[k] && (AR[k - T - 1] + AR[k - T] + AR[k - T + 1] + AR[k - 1] + AR[k] + AR[k + 1] + AR[k + T - 1] + AR[k + T] + AR[k + T + 1]) >= 6 ? 1 : 0;
+					}
+				}
+				// 1) come 1 px del borde (quita el contorno gris/azulado que trae el video)
+				for (let y = 0; y < T; y++) {
+					const o = y * T;
+					for (let x = 1; x < T - 1; x++) { const p = AL[o + x - 1], q = AL[o + x], w = AL[o + x + 1]; TM[o + x] = p < q ? (p < w ? p : w) : (q < w ? q : w); }
+				}
+				for (let y = 1; y < T - 1; y++) {
+					const o = y * T;
+					for (let x = 1; x < T - 1; x++) { const p = TM[o - T + x], q = TM[o + x], w = TM[o + T + x]; const e2 = p < q ? (p < w ? p : w) : (q < w ? q : w); AL[o + x] = AO[o + x] ? AV[o + x] : e2; }
+				}
+				// 2) suaviza el borde (antialiasing)
+				for (let y = 0; y < T; y++) {
+					const o = y * T;
+					for (let x = 1; x < T - 1; x++) TM[o + x] = (AL[o + x - 1] + 6 * AL[o + x] + AL[o + x + 1]) >> 3;
+				}
+				for (let y = 1; y < T - 1; y++) {
+					const o = y * T;
+					for (let x = 1; x < T - 1; x++) px[(o + x) * 4 + 3] = (TM[o - T + x] + 6 * TM[o + x] + TM[o + T + x]) >> 3;
+				}
+				ctx.putImageData(img, 0, 0);
+			}
+
+			function bucle() {
+				if (!canvas.isConnected) { video.pause(); return; } // la pantalla de inicio ya se cerró
+				if (escena.getClientRects().length === 0) { // vista de carga: se pausa para no gastar batería
+					if (!video.paused) video.pause();
+					requestAnimationFrame(bucle);
+					return;
+				}
+				if (video.paused && !reducirMovimiento) video.play().catch(() => { });
+				if (video.readyState >= 2 && video.currentTime !== ultimo) {
+					ultimo = video.currentTime;
+					pintar();
+					escena.classList.add('listo');
+				}
+				requestAnimationFrame(bucle);
+			}
+
+			const p = video.play();
+			if (p && p.catch) p.catch(() => { });
+			if (reducirMovimiento) {
+				video.addEventListener('loadeddata', () => video.pause());
+			}
+			requestAnimationFrame(bucle);
+		})();
+	</script>
+
+	<script type="module">
+
+		import * as THREE from './js/three.module.js';
+		import { APP } from './js/app.js';
+		import { MindARController } from './js/mindar/mindar_controller.js';
+
+		window.THREE = THREE; // Used by APP Scripts.
+
+		const log = document.getElementById('log');
+		const overlay = document.getElementById('pc-inicio');
+		const startButton = document.getElementById('pc-start');
+		const startLabel = document.getElementById('pc-start-label');
+		const errorMsg = document.getElementById('pc-error');
+		const arContainer = document.getElementById('ar-container');
+				const progressFill = document.getElementById('pc-barra-fill');
+		const progressBar = document.getElementById('pc-barra');
+		const progressPct = document.getElementById('pc-pct');
+		const progressLabel = document.getElementById('pc-estado');
+		const botones = document.getElementById('ar-buttons');
+		const videoPanda = document.getElementById('video-panda');
+		const audioPanda = document.getElementById('audio-panda');
+		const audioCancion = document.getElementById('audio-cancion');
+
+		const debugMode = new URLSearchParams(location.search).get('debug') === '1';
+		if (!debugMode) log.style.display = 'none';
+
+		let player = null;
+		let mindarController = null;
+		let loaded = false;
+		let loadPromise = null;
+
+		// ======================================================
+		//  SONIDOS (generados por código, no hay archivos de audio)
+		// ======================================================
+		let audioCtx = null;
+
+		function getCtx() {
+			if (!audioCtx) {
+				const AC = window.AudioContext || window.webkitAudioContext;
+				if (AC) audioCtx = new AC();
+			}
+			if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+			return audioCtx;
+		}
+
+		function ruido(ctx, segundos) {
+			const buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * segundos), ctx.sampleRate);
+			const d = buf.getChannelData(0);
+			for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+			return buf;
+		}
+
+		// Burbuja: tono que sube rápido y se apaga
+		function burbuja(ctx, destino, t, freq, vol) {
+			const o = ctx.createOscillator();
+			const g = ctx.createGain();
+			o.type = 'sine';
+			o.frequency.setValueAtTime(freq, t);
+			o.frequency.exponentialRampToValueAtTime(freq * 2.2, t + 0.09);
+			g.gain.setValueAtTime(0.0001, t);
+			g.gain.exponentialRampToValueAtTime(vol, t + 0.012);
+			g.gain.exponentialRampToValueAtTime(0.0001, t + 0.13);
+			o.connect(g); g.connect(destino);
+			o.start(t); o.stop(t + 0.15);
+		}
+
+		// Campanita brillante con armónicos
+		function campana(ctx, destino, t, freq, vol, dur) {
+			[[1, 1], [2.76, 0.35], [5.4, 0.15]].forEach(([mult, amp]) => {
+				const o = ctx.createOscillator();
+				const g = ctx.createGain();
+				o.type = 'sine';
+				o.frequency.value = freq * mult;
+				g.gain.setValueAtTime(0.0001, t);
+				g.gain.exponentialRampToValueAtTime(vol * amp, t + 0.008);
+				g.gain.exponentialRampToValueAtTime(0.0001, t + dur / mult);
+				o.connect(g); g.connect(destino);
+				o.start(t); o.stop(t + dur + 0.05);
+			});
+		}
+
+		// Lichi: chisporroteo refrescante + burbujitas + destello final
+		function sonidoLichi() {
+			const ctx = getCtx(); if (!ctx) return;
+			const t = ctx.currentTime;
+			const master = ctx.createGain();
+			master.gain.value = 0.55;
+			master.connect(ctx.destination);
+
+			const n = ctx.createBufferSource();
+			n.buffer = ruido(ctx, 1.1);
+			const bp = ctx.createBiquadFilter();
+			bp.type = 'bandpass';
+			bp.frequency.value = 6500;
+			bp.Q.value = 0.8;
+			const gn = ctx.createGain();
+			gn.gain.setValueAtTime(0.0001, t);
+			gn.gain.linearRampToValueAtTime(0.32, t + 0.05);
+			gn.gain.exponentialRampToValueAtTime(0.001, t + 0.95);
+			n.connect(bp); bp.connect(gn); gn.connect(master);
+			n.start(t); n.stop(t + 1.1);
+
+			[0, 0.07, 0.15, 0.23, 0.34, 0.47].forEach((d) => {
+				burbuja(ctx, master, t + d, 500 + Math.random() * 900, 0.25);
+			});
+
+			campana(ctx, master, t + 0.5, 1568, 0.16, 0.7);
+			campana(ctx, master, t + 0.6, 2093, 0.12, 0.7);
+		}
+
+		// Precio: "ka-ching" de caja registradora
+		function sonidoPrecio() {
+			const ctx = getCtx(); if (!ctx) return;
+			const t = ctx.currentTime;
+			const master = ctx.createGain();
+			master.gain.value = 0.6;
+			master.connect(ctx.destination);
+
+			const n = ctx.createBufferSource();
+			n.buffer = ruido(ctx, 0.1);
+			const hp = ctx.createBiquadFilter();
+			hp.type = 'highpass';
+			hp.frequency.value = 2500;
+			const gn = ctx.createGain();
+			gn.gain.setValueAtTime(0.35, t);
+			gn.gain.exponentialRampToValueAtTime(0.001, t + 0.07);
+			n.connect(hp); hp.connect(gn); gn.connect(master);
+			n.start(t); n.stop(t + 0.1);
+
+			campana(ctx, master, t + 0.07, 1318.5, 0.35, 1.2);
+			campana(ctx, master, t + 0.17, 1760, 0.35, 1.5);
+		}
+
+		// Toque suave para el diálogo de la marca
+		function sonidoSuave() {
+			const ctx = getCtx(); if (!ctx) return;
+			const t = ctx.currentTime;
+			const master = ctx.createGain();
+			master.gain.value = 0.5;
+			master.connect(ctx.destination);
+			burbuja(ctx, master, t, 700, 0.3);
+			campana(ctx, master, t + 0.06, 1318.5, 0.14, 0.6);
+		}
+
+		// ======================================================
+		//  SONIDO DEL BAILE DEL PANDA
+		//  El panda siempre baila. Su música suena normal, EXCEPTO mientras
+		//  suena la canción del slogan o hay un diálogo abierto.
+		// ======================================================
+		let cancionSonando = false;
+		let modalActual = null;
+
+		function videoBaile() {
+			const asset = window.player?.assets?.videos?.find((v) => v.name === 'panda');
+			return asset ? asset.video : null;
+		}
+
+		function actualizarSonidoBaile() {
+			const v = videoBaile();
+			if (!v) return;
+			const silencio = cancionSonando || !!modalActual;
+			v.muted = silencio;
+			v.volume = silencio ? 0 : 1;
+		}
+
+		// ======================================================
+		//  CANCIÓN DEL SLOGAN (toca "Good Tea Brighter Days" en la espalda de la etiqueta)
+		// ======================================================
+		function detenerCancion() {
+			audioCancion.pause();
+			audioCancion.currentTime = 0;
+			cancionSonando = false;
+			actualizarSonidoBaile(); // vuelve la música del baile
+		}
+
+		// Primer toque: suena la canción y se calla la música del baile (el panda sigue bailando).
+		// Segundo toque (o al terminar la canción): se detiene y vuelve la música del baile.
+		function alternarCancion() {
+			if (cancionSonando) { detenerCancion(); return; }
+			if (modalActual) return;
+			cancionSonando = true;
+			actualizarSonidoBaile();
+			audioCancion.currentTime = 0;
+			audioCancion.play().catch(() => {
+				cancionSonando = false;
+				actualizarSonidoBaile();
+			});
+		}
+
+		audioCancion.addEventListener('ended', detenerCancion);
+
+		// ======================================================
+		//  DIÁLOGOS
+		// ======================================================
+
+		function ocultarTodos() {
+			document.querySelectorAll('.dlg').forEach((m) => m.classList.remove('abierto'));
+			videoPanda.pause();
+			audioPanda.pause();
+			audioPanda.currentTime = 0;
+		}
+
+		function abrirModal(id) {
+			const m = document.getElementById('modal-' + id);
+			if (!m || modalActual === id) return;
+
+			// Si suena la canción, se corta al abrir un diálogo
+			cancionSonando = false;
+			audioCancion.pause();
+			audioCancion.currentTime = 0;
+
+			ocultarTodos();
+			modalActual = id;
+			m.classList.add('abierto');
+			actualizarSonidoBaile(); // la música del baile se calla mientras el diálogo está abierto
+
+			if (id === 'panda') {
+				audioPanda.play().catch(() => { }); // voz del panda
+			} else if (id === 'historia') {
+				videoPanda.currentTime = 0;
+				videoPanda.play().catch(() => { }); // si el navegador lo bloquea, queda el botón de play
+			} else if (id === 'fruta') {
+				sonidoLichi();
+			} else if (id === 'precio') {
+				sonidoPrecio();
+			} else {
+				sonidoSuave();
+			}
+		}
+
+		function cerrarModales() {
+			ocultarTodos();
+			modalActual = null;
+			actualizarSonidoBaile(); // vuelve la música del baile
+		}
+
+		window.abrirModal = abrirModal;
+		window.cerrarModales = cerrarModales;
+
+		document.querySelectorAll('[data-cerrar]').forEach((b) => b.addEventListener('click', cerrarModales));
+		document.querySelectorAll('.dlg').forEach((m) => {
+			m.addEventListener('click', (e) => { if (e.target === m) cerrarModales(); });
+		});
+		botones.querySelectorAll('[data-modal]').forEach((b) => {
+			b.addEventListener('click', () => abrirModal(b.dataset.modal));
+		});
+
+		// Los toques sobre botones y diálogos no deben llegar al raycast de la escena AR
+		[botones, ...document.querySelectorAll('.dlg')].forEach((el) => {
+			['pointerdown', 'touchstart', 'click'].forEach((tipo) => {
+				el.addEventListener(tipo, (e) => e.stopPropagation());
+			});
+		});
+
+		// Objetos de la escena AR que abren un diálogo al tocarlos
+		const tocables = { Panda: 'panda', frutas: 'fruta' };
+
+		// ======================================================
+		//  CARGA Y ARRANQUE
+		// ======================================================
+		function setProgress(percent, text) {
+			progressFill.style.width = `${percent}%`;
+			progressPct.textContent = `${percent}%`;
+			progressBar.setAttribute('aria-valuenow', percent);
+			if (text) progressLabel.textContent = text;
+		}
+
+		async function loadEverything() {
+
+			if (loadPromise) return loadPromise;
+
+			loadPromise = (async () => {
+
+				setProgress(0, 'Cargando escena...');
+
+				const text = await new Promise((resolve, reject) => {
+					const loader = new THREE.FileLoader();
+					loader.load(
+						'app.json',
+						(t) => resolve(t),
+						(e) => {
+							if (e.lengthComputable) {
+								const p = Math.round((e.loaded / e.total) * 25);
+								setProgress(p, 'Cargando escena...');
+							}
+						},
+						(err) => reject(new Error(err.statusText || 'No se pudo descargar el json'))
+					);
+				});
+
+				player = new APP.Player({ alpha: true });
+				await player.load(JSON.parse(text));
+				player.setSize(window.innerWidth, window.innerHeight);
+				player.play();
+				setProgress(55, 'Escena lista...');
+
+				document.body.appendChild(player.dom);
+
+				window.addEventListener('resize', function () {
+					player.setSize(window.innerWidth, window.innerHeight);
+				});
+
+				window.player = player;
+
+				setProgress(85, 'Preparando AR...');
+				log.textContent = 'initializing...';
+
+				await new Promise((resolve) => setTimeout(resolve, 10));
+
+				setProgress(100, 'Listo');
+				loaded = true;
+
+			})().catch((e) => {
+				loaded = false;
+				loadPromise = null;
+				throw e;
+			});
+
+			return loadPromise;
+		}
+
+		startButton.addEventListener('click', async () => {
+
+			getCtx(); // desbloquea el audio con este primer toque
+
+			errorMsg.classList.remove('visible');
+			startButton.disabled = true;
+			overlay.classList.add('cargando');
+
+			try {
+				await loadEverything();
+				if (!loaded) return;
+
+				setProgress(90, 'Iniciando cámara...');
+
+				mindarController = new MindARController(arContainer, player, debugMode);
+				window.mindarController = mindarController;
+
+				// Toques sobre objetos de la escena
+				for (const [nombre, id] of Object.entries(tocables)) {
+					const obj = player.scene.getObjectByName(nombre);
+					if (obj) obj.onClick = () => abrirModal(id);
+					else console.warn('No se encontró el objeto tocable:', nombre);
+				}
+
+				// Toques sobre las zonas invisibles (código de barras, logo, panda trasero y slogan)
+				mindarController.onPrecioTap = () => abrirModal('precio');
+				mindarController.onLogoTap = () => abrirModal('marca');
+				mindarController.onHistoriaTap = () => abrirModal('historia'); // panda de la parte trasera
+				mindarController.onSloganTap = alternarCancion;                // slogan de la parte trasera
+
+				// Botones en pantalla: solo mientras la lata está a la vista
+				mindarController.addListener('found', () => {
+					botones.classList.add('visible');
+					actualizarSonidoBaile();
+				});
+				mindarController.addListener('lost', () => {
+					botones.classList.remove('visible');
+					detenerCancion(); // si se pierde la lata, la canción se detiene
+				});
+
+				await mindarController.start();
+
+				if (player?.dom) player.dom.style.display = 'none';
+
+				overlay.classList.add('oculto');
+				setTimeout(() => overlay.remove(), 400);
+			} catch (e) {
+				console.error('Error durante la carga:', e);
+				overlay.classList.remove('cargando');
+				startButton.disabled = false;
+				startLabel.textContent = 'Reintentar';
+				errorMsg.textContent = 'No pudimos iniciar la experiencia. Revisa los permisos de la cámara y vuelve a intentar.';
+				errorMsg.classList.add('visible');
+				setProgress(0, 'Error al iniciar');
+			}
+
+		});
+
+		loadEverything().catch((e) => {
+			console.error('Error durante la carga automática:', e.message);
+			startLabel.textContent = 'Reintentar';
+			errorMsg.textContent = 'No se pudo cargar la experiencia. Revisa tu conexión y vuelve a intentar.';
+			errorMsg.classList.add('visible');
+			setProgress(0, 'Error al cargar');
+		});
+
+	</script>
+</body>
+
+</html>
